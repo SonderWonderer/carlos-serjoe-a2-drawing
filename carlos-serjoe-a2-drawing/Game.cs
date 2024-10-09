@@ -1,7 +1,5 @@
-﻿// Include code libraries you need below (use the namespace).
+﻿// Include code libraries you need below (use the namespace)
 using System;
-using System.Data;
-using System.Drawing;
 using System.Numerics;
 
 // The namespace your code is in.
@@ -13,6 +11,9 @@ namespace Game10003
     public class Game
     {
         // Place your variables here:
+
+        //bool variable for if the cup has been placed
+        bool isCupPlaced = false;
 
         //declaring variables that will culminate in the coffee cup 
 
@@ -49,17 +50,6 @@ namespace Game10003
         float lidRectangle2Width = 200;
         float lidRectangle2Height = 10 * 2; // multiplied the height by 2 b/c the previous height was smaller than anticipated (needed to double it)
 
-        //declaring variables for semi-circle portion of the lid
-        //no clue how to create a semi-circle shape in code...
-        //will comment out until further notice
-        //my sketch shows why i wanted a semi-circle portion to the coffee cup 
-        //as an alternative i'll just let the two rectangles comprise the lid and have the straw protrude from that instead
-        /*
-        float lidSemiCircleX;
-        float lidSemiCircleY;
-        float lidSemiCircleRadius;
-        */
-
         //declaring variables for the straw (rectangle)
         //the rectangle should intersect/overlap the rectangle2/top rectangle lid
         float strawRectangleX = 390;
@@ -74,9 +64,6 @@ namespace Game10003
         Color lidColor;
         Color strawColor;
 
-        //declaring user mouse input variables
-        float mouseX;
-        float mouseY;
         bool isMousePressed;
         //declaring user space bar input variable
         bool isSpacebarPressed;
@@ -97,8 +84,6 @@ namespace Game10003
             coffeeBeanColor = new Color(111, 78, 55); //coffeebean colour is coffee brown
             lidColor = new Color(0, 0, 128); //lid colour is navy blue
             strawColor = new Color(255, 20, 147); //straw colour is pink
-
-
         }
 
         /// <summary>
@@ -108,107 +93,103 @@ namespace Game10003
         {
             Window.ClearBackground(Color.OffWhite);
 
-            //input initialization
-            //for the left click mouse input = placement of coffee cup along the 800x600 window
+            //check if left mouse button has been clicked/pressed
+            if (Input.IsMouseButtonPressed(MouseInput.Left))
+            {
+                isCupPlaced = true;
+            }
 
-            //for the spacebar input = randomized coffee cup colors
+            //check if cup has been placed on the 800x600 window
+            if (isCupPlaced)
+            {
+                //create Vector2 instances from float cupCoordinates established earlier
+                Vector2 cupTopLeftVec = new Vector2(cupTopLeft[0], cupTopLeft[1]);
+                Vector2 cupTopRightVec = new Vector2(cupTopRight[0], cupTopRight[1]);
+                Vector2 cupBottomRightVec = new Vector2(cupBottomRight[0], cupBottomRight[1]);
+                Vector2 cupBottomLeftVec = new Vector2(cupBottomLeft[0], cupBottomLeft[1]);
 
+                //drawing out the coffee trapezoid outline using the vectors created
+                Draw.PolyLine(cupTopLeftVec.X, cupTopLeftVec.Y, cupTopRightVec.X, cupTopRightVec.Y); //top
+                Draw.PolyLine(cupTopRightVec.X, cupTopRightVec.Y, cupBottomRightVec.X, cupBottomRightVec.Y); //right
+                Draw.PolyLine(cupBottomRightVec.X, cupBottomRightVec.Y, cupBottomLeftVec.X, cupBottomLeftVec.Y); //bottom
+                Draw.PolyLine(cupBottomLeftVec.X, cupBottomLeftVec.Y, cupTopLeftVec.X, cupTopLeftVec.Y); //left
 
-            //from here (start point) and the end of the code will be responsible for drawing out all the shapes in the coffee cup6
+                //declaring variables for the cup quad
+                Draw.LineSize = 1;
+                Draw.LineColor = Color.Black;
+                Draw.FillColor = cupColor;
 
-            //create Vector2 instances from float cupCoordinates established earlier
-            Vector2 cupTopLeftVec = new Vector2(cupTopLeft[0], cupTopLeft[1]);
-            Vector2 cupTopRightVec = new Vector2(cupTopRight[0], cupTopRight[1]);
-            Vector2 cupBottomRightVec = new Vector2(cupBottomRight[0], cupBottomRight[1]);
-            Vector2 cupBottomLeftVec = new Vector2(cupBottomLeft[0], cupBottomLeft[1]);
+                //Drawing cup quad
+                Draw.Quad(cupTopLeftVec.X, cupTopLeftVec.Y,
+                    cupTopRightVec.X, cupTopRightVec.Y,
+                    cupBottomRightVec.X, cupBottomRightVec.Y,
+                    cupBottomLeftVec.X, cupBottomLeftVec.Y);
 
-            //declare the colors for the polyline
-            //doesn't work with polyline
-            //commented out
-            /*
-            Draw.LineSize = 1;
-            Draw.LineColor = Color.Black;
-            Draw.FillColor = cupColor;
-            */
-            //drawing out the coffee trapezoid outline using the vectors created
-            Draw.PolyLine(cupTopLeftVec.X, cupTopLeftVec.Y, cupTopRightVec.X, cupTopRightVec.Y); //top
-            Draw.PolyLine(cupTopRightVec.X, cupTopRightVec.Y, cupBottomRightVec.X, cupBottomRightVec.Y); //right
-            Draw.PolyLine(cupBottomRightVec.X, cupBottomRightVec.Y, cupBottomLeftVec.X, cupBottomLeftVec.Y); //bottom
-            Draw.PolyLine(cupBottomLeftVec.X, cupBottomLeftVec.Y, cupTopLeftVec.X, cupTopLeftVec.Y); //left
+                //fill in the shape with the declared cupColor 
+                //trying to figure out how to fill in a shape that's created by line function
 
-            //declaring variables for the cup quad
-            Draw.LineSize = 1;
-            Draw.LineColor = Color.Black;
-            Draw.FillColor = cupColor;
+                //declare the colors for the polyline
+                //not working as i thought it would...
+                //will just leave as-is until further notice.
+                Draw.LineSize = 1;
+                Draw.LineColor = Color.Black;
+                Draw.FillColor = labelColor;
 
-            //Drawing cup quad
-            Draw.Quad(cupTopLeftVec.X, cupTopLeftVec.Y,
-                cupTopRightVec.X, cupTopRightVec.Y,
-                cupBottomRightVec.X, cupBottomRightVec.Y,
-                cupBottomLeftVec.X, cupBottomLeftVec.Y);
+                //convert label trapezoid points to Vector2
+                Vector2 labelTopLeftVec = new Vector2(labelTopLeft[0], labelTopLeft[1]);
+                Vector2 labelTopRightVec = new Vector2(labelTopRight[0], labelTopRight[1]);
+                Vector2 labelBottomLeftVec = new Vector2(labelBottomLeft[0], labelBottomLeft[1]);
+                Vector2 labelBottomRightVec = new Vector2(labelBottomRight[0], labelBottomRight[1]);
 
-            //fill in the shape with the declared cupColor 
-            //trying to figure out how to fill in a shape that's created by line function
+                //draw the outline of the label trapezoid
+                //label was switched into a quad.
+                Draw.Quad(labelTopLeftVec.X, labelTopLeftVec.Y, labelTopRightVec.X,
+                    labelTopRightVec.Y, labelBottomRightVec.X, labelBottomRightVec.Y,
+                    labelBottomLeftVec.X, labelBottomLeftVec.Y);
 
-            //declare the colors for the polyline
-            //not working as i thought it would...
-            //will just leave as-is until further notice.
-            Draw.LineSize = 1;
-            Draw.LineColor = Color.Black;
-            Draw.FillColor = labelColor;
+                //fill in the shape with declared labelColor
+                //work-in progress
 
-            //convert label trapezoid points to Vector2
-            Vector2 labelTopLeftVec = new Vector2(labelTopLeft[0], labelTopLeft[1]);
-            Vector2 labelTopRightVec = new Vector2(labelTopRight[0], labelTopRight[1]);
-            Vector2 labelBottomLeftVec = new Vector2(labelBottomLeft[0], labelBottomLeft[1]);
-            Vector2 labelBottomRightVec = new Vector2(labelBottomRight[0], labelBottomRight[1]);
+                //draw out the coffeebean circle
+                Draw.LineSize = 1;
+                Draw.LineColor = Color.Black;
+                Draw.FillColor = coffeeBeanColor;
+                Draw.Circle(coffeeBeanX, coffeeBeanY, coffeeBeanRadius);
+                //fill colour will be the coffeeBeanColor established earlier.
 
-            //draw the outline of the label trapezoid
-            //label was switched into a quad.
-            Draw.Quad(labelTopLeftVec.X, labelTopLeftVec.Y, labelTopRightVec.X,
-                labelTopRightVec.Y, labelBottomRightVec.X, labelBottomRightVec.Y,
-                labelBottomLeftVec.X, labelBottomLeftVec.Y);
+                //draw out the two rectangles that make up the lid
+                //the original dimensions of the rectangles were incorrect = they were too thin. 
+                //need thicker rectangles that will mimic the shape of a coffee lid.
 
-            //fill in the shape with declared labelColor
-            //work-in progress
+                //draw rectangle = bottom rectangle
+                // the dimensions of the rectangle from my grid don't translate into code
+                //correct the dimensions*
+                Draw.LineSize = 1;
+                Draw.LineColor = Color.Black;
+                Draw.FillColor = lidColor;
+                Draw.Rectangle(lidRectangle1X, lidRectangle1Y, lidRectangle1Width, lidRectangle1Height);
+                //fill colour of rectangle
 
-            //draw out the coffeebean circle
-            Draw.LineSize = 1;
-            Draw.LineColor = Color.Black;
-            Draw.FillColor = coffeeBeanColor;
-            Draw.Circle(coffeeBeanX, coffeeBeanY, coffeeBeanRadius);
-            //fill colour will be the coffeeBeanColor established earlier.
+                //draw top lid
+                Draw.LineSize = 1;
+                Draw.LineColor = Color.Black;
+                Draw.FillColor = lidColor;
+                Draw.Rectangle(lidRectangle2X, lidRectangle2Y, lidRectangle2Width, lidRectangle2Height);
+                //fill colour of rectangle 
 
-            //draw out the two rectangles that make up the lid
-            //the original dimensions of the rectangles were incorrect = they were too thin. 
-            //need thicker rectangles that will mimic the shape of a coffee lid.
+                //draw the straw rectangle (final shape of the coffee cup)
+                //the straw was previously thicker than the lid
+                Draw.LineSize = 1;
+                Draw.LineColor = Color.Black;
+                Draw.FillColor = strawColor;
+                Draw.Rectangle(strawRectangleX, strawRectangleY, strawRectangleWidth, strawRectangleHeight);
+            }
 
-            //draw rectangle = bottom rectangle
-            // the dimensions of the rectangle from my grid don't translate into code
-            //correct the dimensions*
-            Draw.LineSize = 1;
-            Draw.LineColor = Color.Black;
-            Draw.FillColor = lidColor;
-            Draw.Rectangle(lidRectangle1X, lidRectangle1Y, lidRectangle1Width, lidRectangle1Height);
-            //fill colour of rectangle
-
-            //draw top lid
-            Draw.LineSize = 1;
-            Draw.LineColor = Color.Black;
-            Draw.FillColor = lidColor;
-            Draw.Rectangle(lidRectangle2X, lidRectangle2Y, lidRectangle2Width, lidRectangle2Height);
-            //fill colour of rectangle 
-
-            //draw the straw rectangle (final shape of the coffee cup)
-            //the straw was previously thicker than the lid
-            Draw.LineSize = 1;
-            Draw.LineColor = Color.Black;
-            Draw.FillColor = strawColor;
-            Draw.Rectangle(strawRectangleX, strawRectangleY, strawRectangleWidth, strawRectangleHeight);
-
-            //initialize the input phase of the program
-            //inputs will be a left mouse button press = placement of the coffee cup at the cursor
-            //spacebar press will result in the randomization of the coffee cups colour palette
+            //check for the spacebar input = randomized coffee cup colors
+            if (Input.IsKeyboardKeyDown(KeyboardInput.Space))
+            {
+           
+            }
 
 
         }
