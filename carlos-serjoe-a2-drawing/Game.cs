@@ -76,6 +76,9 @@ namespace Game10003
             Window.SetTitle("Caffeine Addiction");
             Window.SetSize(800, 600);
 
+            //intro to the application
+            Console.WriteLine("Welcome to the Coffee Shop! \nLeft click on the screen for your order. \nPress spacebar for a random order!");
+
             //intializing the cup colour variables
             //these will be the base colours for the coffee cup
             //the plan is to add a spacebar input that will result in the randomization of the colours of the coffee cup.
@@ -97,6 +100,7 @@ namespace Game10003
             if (Input.IsMouseButtonPressed(MouseInput.Left))
             {
                 isCupPlaced = true;
+                Console.WriteLine("Order's up! \nEnjoy your order!");
             }
 
             //check if cup has been placed on the 800x600 window
