@@ -184,14 +184,6 @@ namespace Game10003
                 Draw.FillColor = strawColor;
                 Draw.Rectangle(strawRectangleX, strawRectangleY, strawRectangleWidth, strawRectangleHeight);
             }
-
-            //check for the spacebar input = randomized coffee cup colors
-            if (Input.IsKeyboardKeyDown(KeyboardInput.Space))
-            {
-           
-            }
-
-
         }
     }
 }
